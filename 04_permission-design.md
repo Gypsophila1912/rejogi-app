@@ -4,31 +4,31 @@
 
 # 0️⃣ 設計前提
 
-| 項目      | 内容                               |
-| ------- | -------------------------------- |
-| 権限モデル   | RBAC / ABAC / Hybrid             |
-| マルチテナント | あり / なし                          |
-| 認証方式    | JWT / Session / OAuth            |
-| スコープ単位  | Global / Organization / Resource |
-| MVP方針   | P0は最小ロールのみ                       |
+| 項目           | 内容                         |
+| -------------- | ---------------------------- |
+| 権限モデル     | RBAC（基本）                 |
+| マルチテナント | サークル単位管理             |
+| 認証方式       | Google OAuth + Supabase Auth |
+| スコープ単位   | Circle（サークル）           |
+| MVP方針        | P0は最小ロールのみ           |
 
 ---
 
 # 1️⃣ 用語定義
 
-| 用語       | 意味                                |
-| -------- | --------------------------------- |
-| Subject  | 操作主体（User / System）               |
-| Resource | 操作対象（Entity）                      |
-| Action   | 操作内容（create/read/update/delete 等） |
-| Role     | 権限グループ                            |
-| Policy   | 条件付き許可ルール                         |
+| 用語     | 意味                                 |
+| -------- | ------------------------------------ |
+| Subject  | 操作主体（ユーザー）                 |
+| Resource | 操作対象（レジ・商品・セッション等） |
+| Action   | 操作（create/read/update/delete）    |
+| Role     | 権限グループ                         |
+| Policy   | 条件付き許可ルール                   |
 
 ---
 
 # 2️⃣ 権限レイヤー構造
 
-```mermaid
+````mermaid
 flowchart TD
     Authentication
     RBAC
@@ -38,8 +38,6 @@ flowchart TD
     Authentication --> RBAC
     RBAC --> ABAC
     ABAC --> Decision
-```
-
 ---
 
 # 3️⃣ RBAC設計テンプレ
@@ -48,20 +46,8 @@ flowchart TD
 
 | ロール名        | レベル | 説明     |
 | ----------- | --- | ------ |
-| SUPER_ADMIN | 100 | 全操作可能  |
 | ADMIN       | 80  | 管理操作可能 |
 | MEMBER      | 50  | 一般利用   |
-| GUEST       | 10  | 閲覧のみ   |
-
----
-
-## 3-2. スコープロール（組織単位）
-
-| ロール名   | レベル | 説明   |
-| ------ | --- | ---- |
-| OWNER  | 50  | 組織全権 |
-| EDITOR | 30  | 編集可  |
-| VIEWER | 10  | 閲覧のみ |
 
 ---
 
@@ -72,7 +58,7 @@ if user.role.level >= required_level:
     allow
 else:
     deny
-```
+````
 
 ---
 
@@ -82,10 +68,9 @@ else:
 
 ```json
 {
-  "subject.role": "EDITOR",
-  "resource.status": "draft",
-  "environment.time": "<= deadline",
-  "tenant_id": "match"
+  "user.circle_id": "resource.circle_id",
+  "event_period": "active",
+  "price": "> 0"
 }
 ```
 
@@ -93,11 +78,11 @@ else:
 
 ## 4-2. ポリシーテーブル例
 
-| ID | 名前             | Action        | 条件              | Effect | Priority |
-| -- | -------------- | ------------- | --------------- | ------ | -------- |
-| 1  | DraftOnlyEdit  | entity:update | status=draft    | allow  | 10       |
-| 2  | OwnerOverride  | *             | role=OWNER      | allow  | 5        |
-| 3  | TenantBoundary | *             | tenant_mismatch | deny   | 1        |
+| ID  | 名前           | Action        | 条件            | Effect | Priority |
+| --- | -------------- | ------------- | --------------- | ------ | -------- |
+| 1   | DraftOnlyEdit  | entity:update | status=draft    | allow  | 10       |
+| 2   | OwnerOverride  | \*            | role=OWNER      | allow  | 5        |
+| 3   | TenantBoundary | \*            | tenant_mismatch | deny   | 1        |
 
 ---
 
@@ -115,60 +100,60 @@ else:
 
 # 5️⃣ ハイブリッド設計パターン
 
-| レイヤー         | 用途              |
-| ------------ | --------------- |
-| RBAC         | 大枠制御（ロールレベル）    |
-| ABAC         | 状態・所有者・時間など動的条件 |
-| Feature Flag | 実験的制御           |
+| レイヤー     | 用途                       |
+| ------------ | -------------------------- |
+| RBAC         | ロール単位大枠制御         |
+| ABAC         | 期間・所有者・サークル制御 |
+| Feature Flag | 将来拡張                   |
 
 ---
 
 # 6️⃣ 代表的ルールテンプレ
 
-### 6-1. 所有者のみ編集可
+### 6-1. セッション存在チェック
 
 ```pseudo
-if resource.owner_id == user.id:
-    allow
+if session_not_exist:
+    deny_order
 ```
 
 ---
 
-### 6-2. ステータスロック
+### 6-2. 価格制約
 
 ```pseudo
-if resource.status == "confirmed":
-    deny update
+if price <= 0:
+    reject
 ```
 
 ---
 
-### 6-3. テナント境界
+### 6-3. イベント期間制御
 
 ```pseudo
-if resource.tenant_id != user.tenant_id:
+if sold_at not in event_session.period:
+    reject
+```
+
+---
+
+### 6-4. 所属サークル制御
+
+```pseudo
+if user.circle_id != resource.circle_id:
     deny
-```
-
----
-
-### 6-4. 自分のデータのみ閲覧
-
-```pseudo
-if resource.user_id == user.id:
-    allow
 ```
 
 ---
 
 # 7️⃣ データモデル連携テンプレ
 
-| ルール    | 参照カラム            |
-| ------ | ---------------- |
-| 所有者制御  | entity.owner_id  |
-| 状態制御   | entity.status    |
-| テナント制御 | entity.tenant_id |
-| 組織制御   | group_members    |
+| ルール       | 参照カラム       |
+| ------------ | ---------------- |
+| 所有者制御   | owner_id         |
+| 状態制御     | status           |
+| サークル制御 | circle_id        |
+| 期間制御     | event_session_id |
 
 ---
 
@@ -176,7 +161,7 @@ if resource.user_id == user.id:
 
 ## 8-1. ABAC評価ログ
 
-| フィールド          | 内容         |
+| フィールド     | 内容       |
 | -------------- | ---------- |
 | user_id        |            |
 | action         |            |
@@ -190,13 +175,13 @@ if resource.user_id == user.id:
 
 ## 8-2. 監査ログ
 
-| フィールド  | 内容        |
-| ------ | --------- |
-| who    | user      |
-| what   | action    |
-| where  | resource  |
-| result | decision  |
-| ip     | client_ip |
+| フィールド | 内容      |
+| ---------- | --------- |
+| who        | user      |
+| what       | action    |
+| where      | resource  |
+| result     | decision  |
+| ip         | client_ip |
 
 ---
 
@@ -204,10 +189,9 @@ if resource.user_id == user.id:
 
 ```typescript
 function authorize(user, action, resource) {
-  if (!isAuthenticated(user)) throw 401
-  if (!tenantMatch(user, resource)) throw 403
-  if (!rbacAllow(user, action)) throw 403
-  if (!abacAllow(user, action, resource)) throw 403
+  if (!isAuthenticated(user)) throw 401;
+  if (!rbacAllow(user, action)) throw 403;
+  if (!eventPeriodValid(resource)) throw 403;
 }
 ```
 
@@ -215,10 +199,10 @@ function authorize(user, action, resource) {
 
 # 🔟 フロントエンド制御
 
-| パターン | 説明         |
-| ---- | ---------- |
-| 非表示  | ボタンを出さない   |
-| 無効化  | disabled表示 |
-| 警告   | warn表示     |
+| パターン | 説明                   |
+| -------- | ---------------------- |
+| 非表示   | 権限なし機能を出さない |
+| 無効化   | 操作禁止表示           |
+| 警告     | UX補助                 |
 
 ※ フロントはUX制御のみ。最終判定は必ずサーバー側。

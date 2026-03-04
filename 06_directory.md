@@ -4,13 +4,13 @@
 
 # 0️⃣ 設計前提
 
-| 項目      | 内容                                 |
-| ------- | ---------------------------------- |
-| リポジトリ構成 | Monorepo / Polyrepo                |
-| アーキテクチャ | Layered / Clean Architecture / DDD |
-| デプロイ単位  | 単一サービス / マイクロサービス                  |
-| 言語      | 任意（TypeScript / Go / Python 等）     |
-| MVP方針   | P0に必要なディレクトリのみ                     |
+| 項目           | 内容                                |
+| -------------- | ----------------------------------- |
+| リポジトリ構成 | Monorepo / Polyrepo                 |
+| アーキテクチャ | Layered / Clean Architecture / DDD  |
+| デプロイ単位   | 単一サービス / マイクロサービス     |
+| 言語           | 任意（TypeScript / Go / Python 等） |
+| MVP方針        | P0に必要なディレクトリのみ          |
 
 ---
 
@@ -38,17 +38,61 @@ root/
 # 2️⃣ フロントエンド構成テンプレ
 
 ```id="tq93md"
-apps/web/
-├── src/
-│   ├── app/           # ルーティング層
-│   ├── features/      # 機能単位モジュール
-│   ├── components/    # 共通UI
+root/
+├── apps/
+│   ├── web/                     # フロントエンドアプリ（React + Hono想定）
+│   └── api/                     # Backend API（Hono Server）
+│
+├── core/
+│   ├── domain/                  # ドメインモデル（ビジネスルール）
+│   ├── usecase/                 # アプリケーションユースケース
+│   ├── repository/              # DB抽象層
+│   └── service/                 # 共通業務ロジック
+│
+├── infrastructure/
+│   ├── db/                      # DB接続
+│   ├── auth/                    # 認証基盤
+│   └── external/                # 外部API
+│
+├── presentation/
+│   ├── components/              # Presentational Component
+│   ├── containers/              # Container Component
 │   ├── hooks/
-│   ├── lib/           # APIクライアント等
-│   ├── stores/        # 状態管理
+│   ├── pages/
+│   └── router/
+│
+├── features/                    # Feature-based module
+│   ├── auth/
+│   ├── cashier/
+│   ├── product/
+│   ├── session/
+│   ├── sales/
+│   └── dashboard/
+│
+├── shared/
+│   ├── ui/
+│   ├── constants/
+│   ├── utils/
 │   └── types/
-├── public/
-└── tests/
+│
+├── migrations/
+│
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+└── docs/
+    ├── 00_designdoc.md
+    ├── 01_feature-list_md.md
+    ├── 02_tech-stack.md
+    ├── 03_screen-flow_md.md
+    ├── 04_permission-design.md
+    ├── 05_erd.md
+    ├── 06_directory.md
+    ├── 07_infrastructure.md
+    ├── 08_logging.md
+    └── 09_schedule_and_issues_md.md
 ```
 
 ---
@@ -56,17 +100,13 @@ apps/web/
 ## Featureベース構成（推奨）
 
 ```id="t6lm52"
-features/
-├── auth/
-│   ├── components/
-│   ├── api.ts
-│   ├── hooks.ts
-│   └── types.ts
-├── entity/
-│   ├── components/
-│   ├── api.ts
-│   ├── hooks.ts
-│   └── types.ts
+├── features/                    # Feature-based module
+│   ├── auth/
+│   ├── cashier/
+│   ├── product/
+│   ├── session/
+│   ├── sales/
+│   └── dashboard/
 ```
 
 ---
@@ -89,46 +129,13 @@ apps/api/
 
 ---
 
-# 4️⃣ DDDベース構成テンプレ
-
-```id="kl2m91"
-src/
-├── modules/
-│   ├── user/
-│   │   ├── domain/
-│   │   ├── application/
-│   │   ├── infrastructure/
-│   │   └── presentation/
-│   ├── organization/
-│   └── core/
-```
-
----
-
-# 5️⃣ マイクロサービス構成
-
-```id="0b5zvx"
-services/
-├── auth-service/
-├── core-service/
-├── notification-service/
-└── gateway/
-```
-
----
-
 # 6️⃣ インフラ構成
 
 ```id="v9k0mz"
-infra/
-├── terraform/
-│   ├── modules/
-│   └── environments/
-│       ├── dev/
-│       ├── staging/
-│       └── prod/
-├── docker/
-└── ci/
+ infrastructure/
+├── db/                      # DB接続
+├── auth/                    # 認証基盤
+└── external/                # 外部API
 ```
 
 ---
@@ -137,12 +144,16 @@ infra/
 
 ```id="az1k93"
 docs/
-├── 01_feature-list.md
-├── 02_db-design.md
-├── 03_screen-flow.md
+├── 00_designdoc.md
+├── 01_feature-list_md.md
+├── 02_tech-stack.md
+├── 03_screen-flow_md.md
 ├── 04_permission-design.md
-├── 05_api-spec.md
-└── 06_directory.md
+├── 05_erd.md
+├── 06_directory.md
+├── 07_infrastructure.md
+├── 08_logging.md
+└── 09_schedule_and_issues_md.md
 ```
 
 ---
@@ -153,45 +164,7 @@ docs/
 tests/
 ├── unit/
 ├── integration/
-├── e2e/
-└── fixtures/
+└── e2e/
 ```
 
 ---
-
-# 9️⃣ ベクトルDB / AI機能がある場合
-
-```id="q91dte"
-packages/
-├── embeddings/
-│   ├── generator.ts
-│   ├── repository.ts
-│   └── vector-client.ts
-├── rag/
-│   ├── retriever.ts
-│   └── prompt-builder.ts
-```
-
----
-
-# 🔟 状態管理分離パターン（FE）
-
-```id="8t1k4d"
-stores/
-├── auth.store.ts
-├── entity.store.ts
-└── ui.store.ts
-```
-
----
-
-# 11️⃣ API設計分離パターン
-
-```id="nb29df"
-api/
-├── client.ts
-├── endpoints/
-│   ├── auth.ts
-│   ├── entities.ts
-│   └── users.ts
-```
