@@ -1,0 +1,8 @@
+{
+  "name": "rejogi-app",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
