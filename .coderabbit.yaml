@@ -1,0 +1,16 @@
+language: ja
+
+reviews:
+  profile: chill
+  high_level_summary: true
+  review_status: true
+  request_changes_workflow: false
+  poem: false
+
+chat:
+  auto_reply: true
+
+ignore:
+  - 'node_modules/**'
+  - 'dist/**'
+  - '*.lock'
