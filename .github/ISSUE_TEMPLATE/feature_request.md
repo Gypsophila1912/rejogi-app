@@ -7,14 +7,15 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 概要
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+やりたいこと
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## 詳細
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+- 仕様
+- UIイメージ
+
+## 完了条件
+
+- [ ] 〇〇できる
