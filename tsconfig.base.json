@@ -9,7 +9,7 @@
     "moduleDetection": "force",
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@rejogi/types": ["./packages/types/src/index.ts"]
+      "@rejogi/types": ["./packages/src/index.ts"]
     }
   }
 }

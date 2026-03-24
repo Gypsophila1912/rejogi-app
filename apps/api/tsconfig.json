@@ -11,10 +11,7 @@
     "declarationMap": true,
 
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "paths": {
-      "@rejogi/types": ["../../packages/src/index.ts"]
-    }
+    "exactOptionalPropertyTypes": true
   },
   "include": ["src"]
 }

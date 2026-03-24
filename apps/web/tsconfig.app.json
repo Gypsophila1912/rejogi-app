@@ -12,10 +12,7 @@
     /* Lint強化系 */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@rejogi/types": ["../../packages/src/index.ts"]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
 }
