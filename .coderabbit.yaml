@@ -14,3 +14,8 @@ ignore:
   - 'node_modules/**'
   - 'dist/**'
   - '*.lock'
+
+pull_request:
+  branches:
+    include:
+      - '*'
