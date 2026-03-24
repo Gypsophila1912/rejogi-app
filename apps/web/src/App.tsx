@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { RegisterPage } from "./pages/RegisterPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
+import { DiscountPage } from "./pages/DiscountPage";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -12,10 +16,30 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <h1>API Response</h1>
-      <p>{message}</p>
-    </div>
+    <Router>
+      <div>
+        {/* 既存のAPI疎通確認 */}
+        <div style={{ backgroundColor: "#e2e8f0", padding: "10px", marginBottom: "10px", fontSize: "14px" }}>
+          <strong>API Response:</strong> {message || "Loading..."}
+        </div>
+        
+        {/* ナビゲーション */}
+        <div style={{ padding: '10px', backgroundColor: '#f0f0f0', marginBottom: '20px' }}>
+          <nav style={{ display: 'flex', gap: '15px' }}>
+            <Link to="/">レジ画面(ホーム)</Link>
+            <Link to="/checkout">会計画面</Link>
+            <Link to="/discount">割引券ページ</Link>
+          </nav>
+        </div>
+
+        {/* 画面ルーティング */}
+        <Routes>
+          <Route path="/" element={<RegisterPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/discount" element={<DiscountPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
