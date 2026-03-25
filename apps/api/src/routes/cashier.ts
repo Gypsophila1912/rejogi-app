@@ -62,6 +62,12 @@ cashier.post('/orders', async (c) => {
 
   // 存在しない・別セッションの商品・販売停止の商品が含まれていないか確認
   for (const item of body.items) {
+    if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+      return c.json(
+        { error: `数量が不正です: ${item.session_product_id}` },
+        400,
+      );
+    }
     const product = products.find((p) => p.id === item.session_product_id);
     if (!product) {
       return c.json(
