@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { supabase } from '../lib/supabase.js';
 
 import type {
   GetSessionProductsResponse,
@@ -10,38 +11,31 @@ const cashier = new Hono();
 
 // GET /cashier/sessions/:sessionId/products
 // フロントがレジ画面を開いたとき商品一覧を取得する
-
-cashier.get('/sessions/:sessionId/products', (c) => {
+cashier.get('/sessions/:sessionId/products', async (c) => {
   const { sessionId } = c.req.param();
 
-  const mock: GetSessionProductsResponse = {
+  const { data, error } = await supabase
+    .from('session_products')
+    .select('id, name, price, active')
+    .eq('session_id', sessionId)
+    .eq('active', true)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    return c.json({ error: 'データの取得に失敗しました' }, 500);
+  }
+
+  const response: GetSessionProductsResponse = {
     session_id: sessionId,
-    products: [
-      {
-        id: 'sp-1',
-        product_id: 'p-1',
-        name: 'たこ焼き',
-        price: 500,
-        active: true,
-      },
-      {
-        id: 'sp-2',
-        product_id: 'p-2',
-        name: 'フランクフルト',
-        price: 300,
-        active: true,
-      },
-      {
-        id: 'sp-3',
-        product_id: 'p-3',
-        name: 'ジュース',
-        price: 200,
-        active: true,
-      },
-    ],
+    products: data.map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      active: p.active,
+    })),
   };
 
-  return c.json(mock);
+  return c.json(response);
 });
 
 // POST /cashier/orders
