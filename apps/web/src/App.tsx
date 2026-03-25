@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { RegisterPage } from "./pages/RegisterPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import { DiscountPage } from "./pages/DiscountPage";
+import { SuccessPage } from "./pages/SuccessPage";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -37,6 +38,7 @@ function App() {
           <Route path="/" element={<RegisterPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/discount" element={<DiscountPage />} />
+          <Route path="/success" element={<SuccessPage />} />
         </Routes>
       </div>
     </Router>
