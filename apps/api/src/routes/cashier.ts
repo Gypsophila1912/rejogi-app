@@ -43,18 +43,48 @@ cashier.get('/sessions/:sessionId/products', async (c) => {
 cashier.post('/orders', async (c) => {
   const body = await c.req.json<CreateOrderRequest>();
 
-  // バリデーション（最低限）
   if (!body.items || body.items.length === 0) {
     return c.json({ error: 'カートが空です' }, 400);
   }
 
-  const mock: CreateOrderResponse = {
-    order_id: crypto.randomUUID(),
-    total_price: body.total_price,
-    created_at: new Date().toISOString(),
+  // ordersに1行insert
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      session_id: body.session_id,
+      user_id: 'c82cc910-583b-4814-a17f-9e946178aef3',
+      total_price: body.total_price,
+      sold_at: new Date().toISOString(),
+    })
+    .select('id, total_price, created_at')
+    .single();
+
+  if (orderError) {
+    console.error('orderError:', orderError);
+    return c.json({ error: '注文の保存に失敗しました' }, 500);
+  }
+
+  // order_itemsに商品の数だけinsert
+  const { error: itemsError } = await supabase.from('order_items').insert(
+    body.items.map((item) => ({
+      order_id: order.id,
+      session_product_id: item.session_product_id,
+      quantity: item.quantity,
+      price_at_time: item.price_at_time,
+    })),
+  );
+
+  if (itemsError) {
+    return c.json({ error: '注文明細の保存に失敗しました' }, 500);
+  }
+
+  const response: CreateOrderResponse = {
+    order_id: order.id,
+    total_price: order.total_price,
+    created_at: order.created_at,
   };
 
-  return c.json(mock, 201);
+  return c.json(response, 201);
 });
 
 export default cashier;
