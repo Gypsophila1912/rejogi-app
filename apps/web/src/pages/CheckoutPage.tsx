@@ -11,8 +11,9 @@ export const CheckoutPage = () => {
   const navigate = useNavigate();
 
   const total = getTotalPrice();
-  const change = typeof receivedAmount === 'number' ? receivedAmount - total : 0;
-  const isSufficient = typeof receivedAmount === 'number' && receivedAmount >= total;
+  const effectiveTotal = Math.max(total, 0); // 割引などでマイナスになっても最低支払額は0円とする
+  const change = typeof receivedAmount === 'number' ? receivedAmount - effectiveTotal : 0;
+  const isSufficient = typeof receivedAmount === 'number' && receivedAmount >= effectiveTotal;
 
   // 10キー系の入力処理
   const handleNumpad = (num: string) => {
