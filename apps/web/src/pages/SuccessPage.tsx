@@ -1,6 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export const SuccessPage = () => {
+  const location = useLocation();
+  const queueNumber = location.state?.queueNumber;
+
   return (
     <div style={{ 
       display: 'flex', 
@@ -26,7 +29,15 @@ export const SuccessPage = () => {
       </div>
       
       <h1 style={{ fontSize: '2em', marginBottom: '10px', color: '#333' }}>決済完了</h1>
-      <p style={{ color: '#666', marginBottom: '40px', fontSize: '1.2em' }}>
+      
+      {queueNumber && (
+        <div style={{ margin: '20px 0', padding: '20px 60px', background: '#e8f0fe', borderRadius: '12px', textAlign: 'center', border: '2px solid #1a73e8' }}>
+          <div style={{ fontSize: '1.2em', color: '#1a73e8', fontWeight: 'bold', marginBottom: '5px' }}>待機番号</div>
+          <div style={{ fontSize: '5em', fontWeight: 'bold', color: '#1a73e8', lineHeight: '1' }}>{queueNumber}</div>
+        </div>
+      )}
+
+      <p style={{ color: '#666', marginTop: queueNumber ? '10px' : '0', marginBottom: '40px', fontSize: '1.2em' }}>
         お買い上げありがとうございました。
       </p>
 
@@ -49,3 +60,4 @@ export const SuccessPage = () => {
     </div>
   );
 };
+

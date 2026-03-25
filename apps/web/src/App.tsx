@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { RegisterPage } from "./pages/RegisterPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
-import { DiscountPage } from "./pages/DiscountPage";
 import { SuccessPage } from "./pages/SuccessPage";
+import { QueuePage } from "./pages/QueuePage";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -29,7 +29,7 @@ function App() {
           <nav style={{ display: 'flex', gap: '15px' }}>
             <Link to="/">レジ画面(ホーム)</Link>
             <Link to="/checkout">会計画面</Link>
-            <Link to="/discount">割引券ページ</Link>
+            <Link to="/queue">引換待機列</Link>
           </nav>
         </div>
 
@@ -37,7 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<RegisterPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/discount" element={<DiscountPage />} />
+          <Route path="/queue" element={<QueuePage />} />
           <Route path="/success" element={<SuccessPage />} />
         </Routes>
       </div>

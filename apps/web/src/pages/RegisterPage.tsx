@@ -12,23 +12,69 @@ const DUMMY_PRODUCTS: Product[] = [
   { id: '6', name: 'お茶', price: 150 },
 ];
 
+const DUMMY_DISCOUNTS: Product[] = [
+  { id: 'd1', name: '50円引き', price: -50 },
+  { id: 'd2', name: '100円引き', price: -100 },
+  { id: 'd3', name: '200円引き', price: -200 },
+];
+
 export const RegisterPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, getTotalPrice } = useCartStore();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'products' | 'discounts'>('products');
+  
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const displayItems = activeTab === 'products' ? DUMMY_PRODUCTS : DUMMY_DISCOUNTS;
 
   return (
     <div style={{ padding: '20px', paddingBottom: '120px', maxWidth: '800px', margin: '0 auto' }}>
       <h1 style={{ borderBottom: '2px solid #333', paddingBottom: '10px' }}>レジ画面</h1>
       
       <div style={{ marginTop: '20px' }}>
-        <h2>商品一覧（タップして追加）</h2>
+        
+        {/* タブ切り替え */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+          <button
+            onClick={() => setActiveTab('products')}
+            style={{
+              flex: 1,
+              padding: '12px',
+              fontSize: '1.2em',
+              fontWeight: 'bold',
+              border: 'none',
+              borderRadius: '8px',
+              background: activeTab === 'products' ? '#1a73e8' : '#e0e0e0',
+              color: activeTab === 'products' ? 'white' : '#333',
+              cursor: 'pointer'
+            }}
+          >
+            🍕 商品・メニュー
+          </button>
+          <button
+            onClick={() => setActiveTab('discounts')}
+            style={{
+              flex: 1,
+              padding: '12px',
+              fontSize: '1.2em',
+              fontWeight: 'bold',
+              border: 'none',
+              borderRadius: '8px',
+              background: activeTab === 'discounts' ? '#1a73e8' : '#e0e0e0',
+              color: activeTab === 'discounts' ? 'white' : '#333',
+              cursor: 'pointer'
+            }}
+          >
+            🎟️ 割引・クーポン
+          </button>
+        </div>
+
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', 
           gap: '15px' 
         }}>
-          {DUMMY_PRODUCTS.map((product) => (
+          {displayItems.map((product) => (
             <button
               key={product.id}
               onClick={() => addToCart(product)}
@@ -48,8 +94,8 @@ export const RegisterPage = () => {
               <span style={{ fontSize: '1.1em', fontWeight: 'bold', marginBottom: '8px' }}>
                 {product.name}
               </span>
-              <span style={{ color: '#0066cc', fontWeight: 'bold' }}>
-                ¥{product.price}
+              <span style={{ color: product.price < 0 ? '#d93025' : '#0066cc', fontWeight: 'bold' }}>
+                {product.price < 0 ? `¥${product.price}` : `¥${product.price}`}
               </span>
             </button>
           ))}

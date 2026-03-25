@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
+import { useQueueStore } from '../store/queueStore';
 
 export const CheckoutPage = () => {
   const { cart, getTotalPrice, clearCart } = useCartStore();
+  const addOrderToQueue = useQueueStore(state => state.addOrderToQueue);
   const [receivedAmount, setReceivedAmount] = useState<number | ''>('');
+  const [addToQueue, setAddToQueue] = useState(false);
   const navigate = useNavigate();
 
   const total = getTotalPrice();
@@ -15,7 +18,6 @@ export const CheckoutPage = () => {
   const handleNumpad = (num: string) => {
     setReceivedAmount(prev => {
       const prevString = prev === '' ? '' : prev.toString();
-      // 先頭の0は許容しない程度の簡易処理
       if (prevString === '0' && num !== '0') return parseInt(num, 10);
       if (prevString === '0' && num === '0') return 0;
       return parseInt(prevString + num, 10);
@@ -27,8 +29,12 @@ export const CheckoutPage = () => {
 
   const handleComplete = () => {
     if (isSufficient) {
+      let assignedNumber = null;
+      if (addToQueue) {
+        assignedNumber = addOrderToQueue(cart);
+      }
       clearCart();
-      navigate('/success');
+      navigate('/success', { state: { queueNumber: assignedNumber } });
     }
   };
 
@@ -135,6 +141,27 @@ export const CheckoutPage = () => {
               ちょうど預かる
             </button>
           </div>
+
+          <label style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            marginBottom: '20px', 
+            fontSize: '1.2em', 
+            cursor: 'pointer', 
+            padding: '15px', 
+            background: '#f8f9fa', 
+            borderRadius: '8px',
+            border: '1px solid #ddd'
+          }}>
+            <input 
+              type="checkbox" 
+              checked={addToQueue}
+              onChange={(e) => setAddToQueue(e.target.checked)}
+              style={{ width: '24px', height: '24px', cursor: 'pointer' }}
+            />
+            <span>会計後に引換待機列へ追加する</span>
+          </label>
 
           <button
             onClick={handleComplete}
