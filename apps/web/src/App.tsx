@@ -4,6 +4,9 @@ import { RegisterPage } from "./pages/RegisterPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import { SuccessPage } from "./pages/SuccessPage";
 import { QueuePage } from "./pages/QueuePage";
+import { LoginPage } from "./pages/LoginPage";
+import { DashboardPage } from "./pages/admin/DashboardPage";
+import { ProductManagementPage } from "./pages/admin/ProductManagementPage";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -24,9 +27,12 @@ function App() {
           <strong>API Response:</strong> {message || "Loading..."}
         </div>
         
-        {/* ナビゲーション */}
+        {/* ナビゲーション（モック確認用） */}
         <div style={{ padding: '10px', backgroundColor: '#f0f0f0', marginBottom: '20px' }}>
           <nav style={{ display: 'flex', gap: '15px' }}>
+            <Link to="/login">ログイン画面</Link>
+            <Link to="/admin">ダッシュボード(管理)</Link>
+            <span style={{ color: '#ccc' }}>|</span>
             <Link to="/">レジ画面(ホーム)</Link>
             <Link to="/checkout">会計画面</Link>
             <Link to="/queue">引換待機列</Link>
@@ -35,6 +41,9 @@ function App() {
 
         {/* 画面ルーティング */}
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin" element={<DashboardPage />} />
+          <Route path="/admin/products" element={<ProductManagementPage />} />
           <Route path="/" element={<RegisterPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/queue" element={<QueuePage />} />
