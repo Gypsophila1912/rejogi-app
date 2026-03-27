@@ -11,6 +11,14 @@ import { InvitePage } from './pages/InvitePage';
 import { NicknamePage } from './pages/NicknamePage';
 import { AuthProvider } from './contexts/AuthContext';
 import { AuthGuard } from './components/AuthGuard';
+import { AppAdminLoginPage } from './pages/app-admin/AppAdminLoginPage';
+import { AppAdminCallbackPage } from './pages/app-admin/AppAdminCallbackPage';
+import { AppAdminDashboardPage } from './pages/app-admin/AppAdminDashboardPage';
+import { CircleListPage } from './pages/app-admin/CircleListPage';
+import { CircleNewPage } from './pages/app-admin/CircleNewPage';
+import { CircleDetailPage } from './pages/app-admin/CircleDetailPage';
+import { MemberListPage } from './pages/app-admin/MemberListPage';
+import { AppAdminGuard } from './components/AppAdminGuard';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -73,6 +81,27 @@ function App() {
                 path="/admin/products"
                 element={<ProductManagementPage />}
               />
+            </Route>
+
+            {/* アプリ管理者向けのルート */}
+            <Route path="/app-admin/login" element={<AppAdminLoginPage />} />
+            <Route
+              path="/app-admin/callback"
+              element={<AppAdminCallbackPage />}
+            />
+
+            <Route element={<AppAdminGuard />}>
+              <Route path="/app-admin" element={<AppAdminDashboardPage />} />
+              <Route path="/app-admin/circles" element={<CircleListPage />} />
+              <Route
+                path="/app-admin/circles/new"
+                element={<CircleNewPage />}
+              />
+              <Route
+                path="/app-admin/circles/:circleId"
+                element={<CircleDetailPage />}
+              />
+              <Route path="/app-admin/members" element={<MemberListPage />} />
             </Route>
           </Routes>
         </div>
