@@ -40,10 +40,8 @@ export const NicknamePage = () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    console.log('session:', session); // 追加
 
     if (!session) {
-      console.log('sessionがないです');
       return;
     }
 
@@ -55,9 +53,6 @@ export const NicknamePage = () => {
       },
       body: JSON.stringify({ name }),
     });
-
-    const data = await res.json();
-    console.log('profile result:', res.status, data); // 追加
 
     if (res.ok) {
       navigate('/admin');

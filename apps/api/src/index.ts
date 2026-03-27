@@ -19,7 +19,6 @@ app.get('/', (c) => {
 });
 
 app.use('/auth/*', authMiddleware);
-app.use('/auth/profile', authMiddleware);
 app.use('/cashier/*', authMiddleware);
 
 app.route('/cashier', cashier);

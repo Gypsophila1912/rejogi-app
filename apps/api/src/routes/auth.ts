@@ -24,7 +24,7 @@ auth.post('/join', async (c) => {
     .single();
 
   if (tokenError || !inviteToken) {
-    console.error('tokenError:', tokenError, 'token:', token); // 追加
+    console.error('tokenError:', tokenError);
     return c.json({ error: '無効なトークンです' }, 400);
   }
   // すでに所属しているか確認
@@ -129,7 +129,7 @@ auth.post('/invite', async (c) => {
     return c.json({ error: 'トークンの発行に失敗しました' }, 500);
   }
 
-  const inviteUrl = `${process.env.FRONTEND_URL}/login?token=${token}`;
+  const inviteUrl = `${process.env.FRONTEND_URL}/invite?token=${token}`;
 
   return c.json({ invite_url: inviteUrl, token, role }, 201);
 });
