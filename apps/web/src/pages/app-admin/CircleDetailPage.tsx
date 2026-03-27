@@ -32,21 +32,27 @@ export const CircleDetailPage = () => {
 
   useEffect(() => {
     const fetch_ = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session) return;
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) return;
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/app-admin/circles/${circleId}`,
-        {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        },
-      );
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/app-admin/circles/${circleId}`,
+          {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          },
+        );
+        if (!res.ok) throw new Error('fetch failed');
 
-      const data = await res.json();
-      setCircle(data);
-      setLoading(false);
+        const data = await res.json();
+        setCircle(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetch_();

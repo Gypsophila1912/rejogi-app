@@ -14,25 +14,13 @@ appAdmin.get('/circles', async (c) => {
     .from('circles')
     .select(
       `
-      id,
-      name,
-      created_at,
-      invite_tokens (
-        id,
-        token,
-        role,
-        created_at
-      ),
-      circle_members (
-        user_id,
-        role,
-        joined_at,
-        profiles (
-          id,
-          name
-        )
-      )
-    `,
+  id,
+  name,
+  created_at,
+  circle_members (
+    user_id
+  )
+`,
     )
     .order('created_at', { ascending: false });
 
@@ -123,7 +111,7 @@ appAdmin.get('/circles/:circleId', async (c) => {
     `,
     )
     .eq('id', circleId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('circle fetch error:', error);

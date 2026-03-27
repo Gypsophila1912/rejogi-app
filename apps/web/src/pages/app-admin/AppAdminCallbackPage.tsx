@@ -23,7 +23,7 @@ export const AppAdminCallbackPage = () => {
       const profile = await res.json();
 
       if (!profile.is_app_admin) {
-        navigate('/app-admin/unauthorized');
+        navigate('/app-admin/login');
         return;
       }
 
