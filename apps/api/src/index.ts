@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import cashier from './routes/cashier.js';
+import auth from './routes/auth.js';
 
 const app = new Hono();
 
@@ -13,6 +14,8 @@ app.get('/', (c) => {
 });
 
 app.route('/cashier', cashier);
+
+app.route('/auth', auth);
 
 // 疎通確認用
 app.get('/health', (c) => c.json({ status: 'ok' }));
