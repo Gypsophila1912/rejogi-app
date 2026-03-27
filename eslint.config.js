@@ -2,7 +2,6 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import ts from 'typescript-eslint';
 import eslint from '@eslint/js';
-import path from 'path';
 import prettier from 'eslint-config-prettier';
 
 export default [

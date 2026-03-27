@@ -1,15 +1,37 @@
-import "dotenv/config";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { cors } from "hono/cors";
+import 'dotenv/config';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
+import { cors } from 'hono/cors';
+import cashier from './routes/cashier.js';
+import auth from './routes/auth.js';
+import { authMiddleware } from './middleware/auth.js';
+import appAdmin from './routes/appAdmin.js';
+import { appAdminMiddleware } from './middleware/appAdmin.js';
 
-const app = new Hono();
+type Variables = {
+  userId: string;
+};
 
-app.use("*", cors());
+const app = new Hono<{ Variables: Variables }>();
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
+app.use('*', cors());
+
+app.get('/', (c) => {
+  return c.text('Hello Hono!');
 });
+
+app.use('/auth/*', authMiddleware);
+app.use('/cashier/*', authMiddleware);
+app.use('/app-admin/*', authMiddleware);
+app.use('/app-admin/*', appAdminMiddleware);
+app.route('/app-admin', appAdmin);
+
+app.route('/cashier', cashier);
+
+app.route('/auth', auth);
+
+// 疎通確認用
+app.get('/health', (c) => c.json({ status: 'ok' }));
 
 serve({
   fetch: app.fetch,

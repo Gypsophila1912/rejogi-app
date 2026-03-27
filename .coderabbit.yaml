@@ -1,16 +1,18 @@
 language: ja
-
 reviews:
   profile: chill
   high_level_summary: true
   review_status: true
   request_changes_workflow: false
   poem: false
-
+  path_filters:
+    - '!node_modules/**'
+    - '!dist/**'
+    - '!*.lock'
+  auto_review:
+    enabled: true
+    base_branches:
+      - develop
+      - main
 chat:
   auto_reply: true
-
-ignore:
-  - 'node_modules/**'
-  - 'dist/**'
-  - '*.lock'
