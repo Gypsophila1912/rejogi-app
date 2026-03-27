@@ -5,6 +5,8 @@ import { cors } from 'hono/cors';
 import cashier from './routes/cashier.js';
 import auth from './routes/auth.js';
 import { authMiddleware } from './middleware/auth.js';
+import appAdmin from './routes/appAdmin.js';
+import { appAdminMiddleware } from './middleware/appAdmin.js';
 
 type Variables = {
   userId: string;
@@ -20,6 +22,9 @@ app.get('/', (c) => {
 
 app.use('/auth/*', authMiddleware);
 app.use('/cashier/*', authMiddleware);
+app.use('/app-admin/*', authMiddleware);
+app.use('/app-admin/*', appAdminMiddleware);
+app.route('/app-admin', appAdmin);
 
 app.route('/cashier', cashier);
 
