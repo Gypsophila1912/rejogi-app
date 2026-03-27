@@ -7,7 +7,11 @@ import type {
   CreateOrderResponse,
 } from '@rejogi/types';
 
-const cashier = new Hono();
+type Variables = {
+  userId: string;
+};
+
+const cashier = new Hono<{ Variables: Variables }>();
 
 // GET /cashier/sessions/:sessionId/products
 // フロントがレジ画面を開いたとき商品一覧を取得する
@@ -91,13 +95,15 @@ cashier.post('/orders', async (c) => {
     return sum + product.price * item.quantity;
   }, 0);
 
+  const userId = c.get('userId');
+
   // ordersに1行insert
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .insert({
       session_id: body.session_id,
-      user_id: 'c82cc910-583b-4814-a17f-9e946178aef3',
-      total_price: serverTotal, // フロントの値ではなくサーバー計算値を使う
+      user_id: userId,
+      total_price: serverTotal,
       sold_at: new Date().toISOString(),
     })
     .select('id, total_price, created_at')
