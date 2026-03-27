@@ -1,14 +1,31 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-
-// ダミーデータ：今年度のセッションが作成されているかどうかの状態
-// false にすると各管理機能がグレーアウトされます
-const DUMMY_HAS_ACTIVE_SESSION = true;
 
 export const DashboardPage = () => {
   const { user } = useAuth();
-  const [hasActiveSession, setHasActiveSession] = useState(DUMMY_HAS_ACTIVE_SESSION);
+  const [hasActiveSession, setHasActiveSession] = useState(false);
+
+  useEffect(() => {
+    // サーバーからセッションの有効状態を取得する（APIが未実装の場合はモックへフォールバック）
+    const fetchActiveSession = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/sessions/active');
+        if (res.ok) {
+          const data = await res.json();
+          setHasActiveSession(data.isActive);
+        } else {
+          console.warn('API returned non-OK. Using mocked status.');
+          setHasActiveSession(true);
+        }
+      } catch (error) {
+        console.error('API fetch failed, fallback to active=true for development:', error);
+        setHasActiveSession(true);
+      }
+    };
+    
+    fetchActiveSession();
+  }, []);
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>      
@@ -30,12 +47,14 @@ export const DashboardPage = () => {
             {hasActiveSession ? '✓ 作成済み（各種操作が可能です）' : '未作成（先にセッションを作成してください）'}
           </span>
         </div>
-        <button
-          onClick={() => setHasActiveSession(!hasActiveSession)}
-          style={{ padding: '8px 16px', borderRadius: '4px', border: '1px solid #ccc', cursor: 'pointer' }}
-        >
-          状態を切り替える(テスト用)
-        </button>
+        {import.meta.env.DEV && (
+          <button
+            onClick={() => setHasActiveSession(!hasActiveSession)}
+            style={{ padding: '8px 16px', borderRadius: '4px', border: '1px solid #ccc', cursor: 'pointer' }}
+          >
+            状態を切り替える(テスト用)
+          </button>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
