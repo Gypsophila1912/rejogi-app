@@ -21,8 +21,9 @@ export const ProductManagementPage = () => {
       <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', marginBottom: '30px' }}>
         <h2 style={{ fontSize: '1.2em', marginTop: 0 }}>セッション情報設定</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <label style={{ fontWeight: 'bold' }}>イベント・屋台名</label>
+          <label htmlFor="sessionName" style={{ fontWeight: 'bold' }}>イベント・屋台名</label>
           <input 
+            id="sessionName"
             type="text" 
             value={sessionName} 
             onChange={(e) => setSessionName(e.target.value)}
