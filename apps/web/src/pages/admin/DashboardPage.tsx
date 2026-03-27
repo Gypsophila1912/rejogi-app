@@ -75,6 +75,9 @@ export const DashboardPage = () => {
         {/* 売上まとめ */}
         <Link 
           to={hasActiveSession ? "/admin/sales" : "#"}
+          aria-disabled={!hasActiveSession}
+          tabIndex={!hasActiveSession ? -1 : undefined}
+          onClick={!hasActiveSession ? (e) => e.preventDefault() : undefined}
           style={{
             display: 'block',
             padding: '30px',
@@ -95,6 +98,9 @@ export const DashboardPage = () => {
         {/* メンバー管理 */}
         <Link 
           to={hasActiveSession ? "/admin/members" : "#"}
+          aria-disabled={!hasActiveSession}
+          tabIndex={!hasActiveSession ? -1 : undefined}
+          onClick={!hasActiveSession ? (e) => e.preventDefault() : undefined}
           style={{
             display: 'block',
             padding: '30px',
