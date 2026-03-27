@@ -1,6 +1,22 @@
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 export const LoginPage = () => {
+  const handleOAuthLogin = async (provider: 'github' | 'google') => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        // ログイン成功後にどこにリダイレクトするか
+        redirectTo: `${window.location.origin}/admin`,
+      },
+    });
+
+    if (error) {
+      alert('ログインに失敗しました: ' + error.message);
+      console.error(error);
+    }
+  };
+
   return (
     <div
       style={{
@@ -40,54 +56,80 @@ export const LoginPage = () => {
             marginBottom: '30px',
           }}
         >
-          <div>
-            <label
-              style={{
-                display: 'block',
-                marginBottom: '5px',
-                fontWeight: 'bold',
-              }}
-            >
-              ユーザーID / Email
-            </label>
-            <input
-              type="text"
-              placeholder="user@example.com"
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '6px',
-                border: '1px solid #ccc',
-                boxSizing: 'border-box',
-              }}
+          <button
+            onClick={() => handleOAuthLogin('google')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              padding: '12px',
+              background: 'white',
+              color: '#333',
+              border: '1px solid #ccc',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              style={{ width: '20px', height: '20px' }}
             />
-          </div>
-          <div>
-            <label
-              style={{
-                display: 'block',
-                marginBottom: '5px',
-                fontWeight: 'bold',
-              }}
-            >
-              パスワード
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '6px',
-                border: '1px solid #ccc',
-                boxSizing: 'border-box',
-              }}
+            Googleでログイン
+          </button>
+
+          <button
+            onClick={() => handleOAuthLogin('github')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              padding: '12px',
+              background: '#24292e',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            <img
+              src="https://www.svgrepo.com/show/512317/github-142.svg"
+              alt="GitHub"
+              style={{ width: '20px', height: '20px', filter: 'invert(1)' }}
             />
-          </div>
+            GitHubでログイン
+          </button>
+        </div>
+
+        <div
+          style={{
+            position: 'relative',
+            textAlign: 'center',
+            marginBottom: '30px',
+          }}
+        >
+          <hr style={{ border: 'none', borderTop: '1px solid #ddd' }} />
+          <span
+            style={{
+              position: 'absolute',
+              top: '-10px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'white',
+              padding: '0 10px',
+              color: '#999',
+              fontSize: '0.9em',
+            }}
+          >
+            またはモック（テスト用）
+          </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {/* 今回はモックなので、リンクで強制的に画面遷移させます */}
           <Link
             to="/admin"
             style={{
@@ -101,7 +143,7 @@ export const LoginPage = () => {
               fontWeight: 'bold',
             }}
           >
-            管理者としてログイン
+            管理者としてログイン (Mock)
           </Link>
           <Link
             to="/"
@@ -116,7 +158,7 @@ export const LoginPage = () => {
               fontWeight: 'bold',
             }}
           >
-            一般スタッフとしてログイン (レジへ)
+            一般スタッフとしてログイン (Mock)
           </Link>
         </div>
       </div>

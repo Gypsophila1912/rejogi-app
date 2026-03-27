@@ -1,29 +1,31 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-
-// ダミーデータ：今年度のセッションが作成されているかどうかの状態
-// false にすると各管理機能がグレーアウトされます
-const DUMMY_HAS_ACTIVE_SESSION = true;
-
-// 認証トークンのダミーチェック用 (将来的にはこの判定を Context や API 呼び出しに置き換えます)
-const IS_AUTHENTICATED_MOCK = true; // false にするとログイン画面へリダイレクトされます
+import { useAuth } from '../../contexts/AuthContext';
 
 export const DashboardPage = () => {
-  const navigate = useNavigate();
-  const [hasActiveSession, setHasActiveSession] = useState(
-    DUMMY_HAS_ACTIVE_SESSION,
-  );
+  const { user } = useAuth();
+  const [hasActiveSession, setHasActiveSession] = useState(false);
 
   useEffect(() => {
-    // 【将来の実装想定】ここでlocalStorageのトークン確認や、APIでの権限チェックを行う
-    // const token = localStorage.getItem('auth_token');
-    // if (!token) { navigate('/login'); }
+    // サーバーからセッションの有効状態を取得する（APIが未実装の場合はモックへフォールバック）
+    const fetchActiveSession = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/sessions/active');
+        if (res.ok) {
+          const data = await res.json();
+          setHasActiveSession(data.isActive);
+        } else {
+          console.warn('API returned non-OK. Assuming no active session.');
+          setHasActiveSession(false);
+        }
+      } catch (error) {
+        console.error('API fetch failed, assuming no active session:', error);
+        setHasActiveSession(false);
+      }
+    };
 
-    if (!IS_AUTHENTICATED_MOCK) {
-      alert('権限がありません。ログインしてください。');
-      navigate('/login');
-    }
-  }, [navigate]);
+    fetchActiveSession();
+  }, []);
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
@@ -51,7 +53,7 @@ export const DashboardPage = () => {
           </h1>
           <div>
             <span style={{ marginRight: '15px', color: '#666' }}>
-              ログイン中: 管理者
+              ログイン中: {user?.email || '管理者'}
             </span>
             <Link
               to="/"
@@ -94,17 +96,19 @@ export const DashboardPage = () => {
               : '未作成（先にセッションを作成してください）'}
           </span>
         </div>
-        <button
-          onClick={() => setHasActiveSession(!hasActiveSession)}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            cursor: 'pointer',
-          }}
-        >
-          状態を切り替える(テスト用)
-        </button>
+        {import.meta.env.DEV && (
+          <button
+            onClick={() => setHasActiveSession(!hasActiveSession)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              cursor: 'pointer',
+            }}
+          >
+            状態を切り替える(テスト用)
+          </button>
+        )}
       </div>
 
       <div
@@ -133,7 +137,7 @@ export const DashboardPage = () => {
             📦 商品・セッション管理
           </h2>
           <p style={{ margin: 0, color: '#666', lineHeight: 1.5 }}>
-            年度や屋台名の設定、販売する商品や割引券の登録・編集を行います。
+            年度や屋台名 の設定、販売する商品や割引券の登録・編集を行います。
           </p>
         </Link>
 
@@ -228,10 +232,10 @@ export const DashboardPage = () => {
           }}
         >
           <h2 style={{ margin: '0 0 10px 0', color: '#ea4335' }}>
-            🕰️ 履歴・過去データ
+            🕰️ 履歴・過去 データ
           </h2>
           <p style={{ margin: 0, color: '#666', lineHeight: 1.5 }}>
-            過去の年度・セッションごとの取引詳細や履歴を閲覧します。
+            過去の年度・ セッションごとの取引詳細や履歴を閲覧します。
           </p>
         </Link>
       </div>
