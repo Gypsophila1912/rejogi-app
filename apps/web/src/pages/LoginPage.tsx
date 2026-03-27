@@ -7,7 +7,7 @@ export const LoginPage = () => {
       provider,
       options: {
         // ログイン成功後にどこにリダイレクトするか
-        redirectTo: `${window.location.origin}/admin`,
+        redirectTo: `${window.location.origin}/nickname`,
       },
     });
 
