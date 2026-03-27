@@ -7,6 +7,8 @@ import { QueuePage } from './pages/QueuePage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/admin/DashboardPage';
 import { ProductManagementPage } from './pages/admin/ProductManagementPage';
+import { InvitePage } from './pages/InvitePage';
+import { NicknamePage } from './pages/NicknamePage';
 import { AuthProvider } from './contexts/AuthContext';
 import { AuthGuard } from './components/AuthGuard';
 
@@ -57,6 +59,8 @@ function App() {
           {/* 画面ルーティング */}
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/invite" element={<InvitePage />} />
+            <Route path="/nickname" element={<NicknamePage />} />
             <Route path="/" element={<RegisterPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/queue" element={<QueuePage />} />
