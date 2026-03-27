@@ -15,12 +15,12 @@ export const DashboardPage = () => {
           const data = await res.json();
           setHasActiveSession(data.isActive);
         } else {
-          console.warn('API returned non-OK. Using mocked status.');
-          setHasActiveSession(true);
+          console.warn('API returned non-OK. Assuming no active session.');
+          setHasActiveSession(false);
         }
       } catch (error) {
-        console.error('API fetch failed, fallback to active=true for development:', error);
-        setHasActiveSession(true);
+        console.error('API fetch failed, assuming no active session:', error);
+        setHasActiveSession(false);
       }
     };
     
