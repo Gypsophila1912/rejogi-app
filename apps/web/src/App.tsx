@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { RegisterPage } from "./pages/RegisterPage";
-import { CheckoutPage } from "./pages/CheckoutPage";
-import { SuccessPage } from "./pages/SuccessPage";
-import { QueuePage } from "./pages/QueuePage";
-import { LoginPage } from "./pages/LoginPage";
-import { DashboardPage } from "./pages/admin/DashboardPage";
-import { ProductManagementPage } from "./pages/admin/ProductManagementPage";
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { RegisterPage } from './pages/RegisterPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { SuccessPage } from './pages/SuccessPage';
+import { QueuePage } from './pages/QueuePage';
+import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/admin/DashboardPage';
+import { ProductManagementPage } from './pages/admin/ProductManagementPage';
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch("http://localhost:3000")
+    fetch('http://localhost:3000')
       .then((res) => res.text())
       .then((data) => {
         setMessage(data);
@@ -23,12 +23,25 @@ function App() {
     <Router>
       <div>
         {/* 既存のAPI疎通確認 */}
-        <div style={{ backgroundColor: "#e2e8f0", padding: "10px", marginBottom: "10px", fontSize: "14px" }}>
-          <strong>API Response:</strong> {message || "Loading..."}
+        <div
+          style={{
+            backgroundColor: '#e2e8f0',
+            padding: '10px',
+            marginBottom: '10px',
+            fontSize: '14px',
+          }}
+        >
+          <strong>API Response:</strong> {message || 'Loading...'}
         </div>
-        
+
         {/* ナビゲーション（モック確認用） */}
-        <div style={{ padding: '10px', backgroundColor: '#f0f0f0', marginBottom: '20px' }}>
+        <div
+          style={{
+            padding: '10px',
+            backgroundColor: '#f0f0f0',
+            marginBottom: '20px',
+          }}
+        >
           <nav style={{ display: 'flex', gap: '15px' }}>
             <Link to="/login">ログイン画面</Link>
             <Link to="/admin">ダッシュボード(管理)</Link>
