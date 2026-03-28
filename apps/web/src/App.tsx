@@ -9,6 +9,7 @@ import { DashboardPage } from './pages/admin/DashboardPage';
 import { ProductManagementPage } from './pages/admin/ProductManagementPage';
 import { InvitePage } from './pages/InvitePage';
 import { NicknamePage } from './pages/NicknamePage';
+import { CircleSelectPage } from './pages/CircleSelectPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { AuthGuard } from './components/AuthGuard';
 
@@ -69,6 +70,7 @@ function App() {
             {/* 管理者向け（要認証）のルート */}
             <Route element={<AuthGuard />}>
               <Route path="/admin" element={<DashboardPage />} />
+              <Route path="/circle-select" element={<CircleSelectPage />} />
               <Route
                 path="/admin/products"
                 element={<ProductManagementPage />}

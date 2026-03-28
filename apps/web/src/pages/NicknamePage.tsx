@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 export const NicknamePage = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { refreshProfile } = useAuth();
 
   useEffect(() => {
     const joinCircle = async () => {
@@ -55,6 +57,7 @@ export const NicknamePage = () => {
     });
 
     if (res.ok) {
+      await refreshProfile();
       navigate('/admin');
     } else {
       alert('保存に失敗しました');
